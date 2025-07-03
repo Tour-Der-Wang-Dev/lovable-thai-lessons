@@ -1,29 +1,9 @@
-
 import React from 'react';
 import { Calendar, Clock, Users, Video, MessageCircle, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-
-interface LiveSession {
-  id: number;
-  title: string;
-  titleTh: string;
-  teacher: string;
-  teacherTh: string;
-  time: string;
-  date: string;
-  dateLabel: string;
-  platform: string;
-  participants: number;
-  maxParticipants: number;
-  level: string;
-  levelTh: string;
-  description: string;
-  thumbnail: string;
-  isLive: boolean;
-  canJoin: boolean;
-}
+import { LiveSession } from '@/data/liveSessions';
 
 interface LiveSessionCardProps {
   session: LiveSession;
