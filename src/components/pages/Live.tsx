@@ -95,7 +95,7 @@ const Live: React.FC = () => {
     { id: 'week', label: 'สัปดาห์นี้', labelEn: 'This Week' }
   ];
 
-  const filteredSessions = liveSession.filter(session => {
+  const filteredSessions = liveSessions.filter(session => {
     if (selectedDate === 'week') return true;
     return session.date === selectedDate;
   });
