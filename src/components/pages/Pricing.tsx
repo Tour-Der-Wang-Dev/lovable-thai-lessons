@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Check, Star, Zap, Crown, Gift } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Star, Users, Clock, Video, BookOpen, Award, Zap } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,238 +12,322 @@ interface PricingProps {
 
 const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
   const { t } = useLanguage();
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
 
   const packages = [
     {
       id: 'general',
-      name: 'แพ็คเกจทั่วไป',
-      nameEn: 'General Package',
-      price: 390,
-      originalPrice: 490,
+      name: 'General Package',
+      nameTh: 'แพ็คเกจทั่วไป',
+      description: 'เหมาะสำหรับผู้เริ่มต้นเรียนภาษาอังกฤษ',
+      monthlyPrice: 390,
+      yearlyPrice: 3900,
+      originalMonthlyPrice: 490,
+      originalYearlyPrice: 4900,
       discount: '20%',
-      icon: Star,
       color: 'blue',
       popular: false,
-      description: 'เหมาะสำหรับผู้เริ่มต้นเรียนภาษาอังกฤษ',
       features: [
-        'คอร์สเรียนพื้นฐาน 10 คอร์ส',
-        'วิดีโอบทเรียน HD คุณภาพสูง',
+        'คอร์สเรียนพื้นฐาน 20+ คอร์ส',
+        'วิดีโอบทเรียน HD',
         'แบบทดสอบออนไลน์',
-        'เอกสารประกอบการเรียน PDF',
-        'การเข้าถึงเนื้อหา 30 วัน',
-        'ซับพอร์ต LINE ในเวลาทำการ'
+        'เอกสารประกอบการเรียน',
+        'ซัพพอร์ต 24/7',
+        'เรียนผ่านมือถือได้'
       ],
-      cta: 'เริ่มเรียนเลย'
+      featuresEn: [
+        '20+ Basic Courses',
+        'HD Video Lessons',
+        'Online Quizzes',
+        'Learning Materials',
+        '24/7 Support',
+        'Mobile Learning'
+      ],
+      limitations: [
+        'ไม่รวมคลาสสด',
+        'ไม่รวมการสอบ CEFR'
+      ]
     },
     {
       id: 'cefr',
-      name: 'แพ็คเกจ CEFR',
-      nameEn: 'CEFR Package',
-      price: 590,
-      originalPrice: 790,
+      name: 'CEFR Package',
+      nameTh: 'แพ็คเกจ CEFR',
+      description: 'เตรียมความพร้อมสำหรับการสอบมาตรฐานสากล',
+      monthlyPrice: 590,
+      yearlyPrice: 5900,
+      originalMonthlyPrice: 790,
+      originalYearlyPrice: 7900,
       discount: '25%',
-      icon: Zap,
-      color: 'orange',
-      popular: true,
-      description: 'เรียนตามมาตรฐาน CEFR พร้อมรับรอง',
+      color: 'green',
+      popular: false,
       features: [
-        'คอร์ส CEFR ครบทุกระดับ A1-C2',
-        'คลาสเรียนสด 4 ครั้ง/เดือน',
-        'แบบทดสอบวัดระดับ CEFR',
-        'ใบรับรองหลังจบคอร์ส',
-        'การเข้าถึงเนื้อหา 60 วัน',
-        'ซับพอร์ต LINE 24/7',
-        'คลาสทบทวนฟรี 2 ครั้ง'
+        'คอร์ส General Package ทั้งหมด',
+        'คอร์สเตรียมสอบ CEFR A1-C2',
+        'แบบทดสอบจำลอง CEFR',
+        'การวิเคราะห์คะแนนแบบละเอียด',
+        'เอกสารเตรียมสอบพิเศษ',
+        'คลาสสดเฉพาะ CEFR 2 ครั้ง/เดือน'
       ],
-      cta: 'สั่งซื้อยอดนิยม'
+      featuresEn: [
+        'All General Package features',
+        'CEFR Prep Courses A1-C2',
+        'CEFR Mock Tests',
+        'Detailed Score Analysis',
+        'Special Exam Materials',
+        '2 CEFR Live Classes/month'
+      ],
+      limitations: [
+        'คลาสสดจำกัด 2 ครั้ง/เดือน'
+      ]
     },
     {
       id: 'combo',
-      name: 'แพ็คเกจรวม',
-      nameEn: 'Combo Package',
-      price: 1500,
-      originalPrice: 2000,
+      name: 'Combo Package',
+      nameTh: 'แพ็คเกจรวม',
+      description: 'ครบครันที่สุด! รวมทุกคุณสมบัติ',
+      monthlyPrice: 1500,
+      yearlyPrice: 15000,
+      originalMonthlyPrice: 2000,
+      originalYearlyPrice: 20000,
       discount: '25%',
-      icon: Crown,
-      color: 'purple',
-      popular: false,
-      description: 'ครบครันที่สุด เรียนได้ทุกคอร์ส',
+      color: 'orange',
+      popular: true,
       features: [
-        'คอร์สทั้งหมดในระบบ (50+ คอร์ส)',
-        'คลาสเรียนสดไม่จำกัด',
-        'คลาส 1-on-1 กับครู 2 ครั้ง/เดือน',
-        'แบบทดสอบ Mock Test ทุกประเภท',
-        'ใบรับรองจากสถาบัน',
-        'การเข้าถึงเนื้อหา 90 วัน',
-        'ซับพอร์ต Priority 24/7',
-        'คลาสเสริมพิเศษฟรี'
+        'คอร์สทั้งหมด 50+ คอร์ส',
+        'คลาสสดไม่จำกัด',
+        'การสอนแบบ 1:1 2 ชั่วโมง/เดือน',
+        'การวิเคราะห์ผลการเรียนแบบละเอียด',
+        'เอกสารเฉพาะบุคคล',
+        'ปรึกษาครูได้ตลอด 24/7',
+        'รับรองผลการเรียน',
+        'ส่วนลดสำหรับการสอบจริง 50%'
       ],
-      cta: 'อัพเกรดเลย'
+      featuresEn: [
+        'All 50+ Courses',
+        'Unlimited Live Classes',
+        '2hrs/month 1:1 Teaching',
+        'Detailed Learning Analytics',
+        'Personalized Materials',
+        '24/7 Teacher Consultation',
+        'Learning Guarantee',
+        '50% Real Exam Discount'
+      ],
+      limitations: []
     }
   ];
 
-  const getIconColor = (color: string) => {
-    switch (color) {
-      case 'blue': return 'text-blue-600 bg-blue-100';
-      case 'orange': return 'text-orange-600 bg-orange-100';
-      case 'purple': return 'text-purple-600 bg-purple-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
+  const getPrice = (pkg: typeof packages[0]) => {
+    return billingPeriod === 'monthly' ? pkg.monthlyPrice : pkg.yearlyPrice;
   };
 
-  const getButtonColor = (color: string) => {
-    switch (color) {
-      case 'blue': return 'btn-secondary';
-      case 'orange': return 'btn-primary';
-      case 'purple': return 'bg-purple-600 hover:bg-purple-700 text-white';
-      default: return 'btn-secondary';
-    }
+  const getOriginalPrice = (pkg: typeof packages[0]) => {
+    return billingPeriod === 'monthly' ? pkg.originalMonthlyPrice : pkg.originalYearlyPrice;
+  };
+
+  const getColorClasses = (color: string, isPopular: boolean = false) => {
+    const colors = {
+      blue: {
+        border: 'border-blue-200',
+        bg: 'bg-blue-50',
+        text: 'text-blue-600',
+        button: 'btn-secondary'
+      },
+      green: {
+        border: 'border-green-200',
+        bg: 'bg-green-50',
+        text: 'text-green-600',
+        button: 'bg-green-600 hover:bg-green-700 text-white'
+      },
+      orange: {
+        border: 'border-orange-200',
+        bg: 'bg-orange-50',
+        text: 'text-orange-600',
+        button: 'btn-primary'
+      }
+    };
+    
+    return isPopular ? {
+      ...colors[color as keyof typeof colors],
+      border: 'border-orange-400 ring-2 ring-orange-400'
+    } : colors[color as keyof typeof colors];
   };
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 thai-text">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4 thai-text">
           {t('choose_package')}
         </h1>
-        <p className="text-lg text-gray-600 thai-text mb-6">
-          เลือกแพ็คเกจที่เหมาะกับระดับและเป้าหมายการเรียนของคุณ
+        <p className="text-gray-600 thai-text max-w-2xl mx-auto">
+          เลือกแพ็คเกจที่เหมาะกับความต้องการและง예บประมาณของคุณ พร้อมส่วนลดพิเศษ!
         </p>
-        <div className="flex items-center justify-center space-x-2 bg-green-50 text-green-700 px-4 py-2 rounded-full inline-flex">
-          <Gift className="w-5 h-5" />
-          <span className="font-medium thai-text">โปรโมชั่นพิเศษ! ลดสูงสุด 25% วันนี้เท่านั้น</span>
+      </div>
+
+      {/* Billing Toggle */}
+      <div className="flex justify-center mb-8">
+        <div className="bg-gray-100 p-1 rounded-lg">
+          <Button
+            variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setBillingPeriod('monthly')}
+            className="thai-text"
+          >
+            รายเดือน
+          </Button>
+          <Button
+            variant={billingPeriod === 'yearly' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setBillingPeriod('yearly')}
+            className="thai-text relative"
+          >
+            รายปี
+            <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs">
+              ประหยัด 15%
+            </Badge>
+          </Button>
         </div>
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {packages.map((pkg) => (
-          <Card 
-            key={pkg.id} 
-            className={`classroom-card relative ${
-              pkg.popular ? 'ring-2 ring-orange-500 ring-opacity-50 scale-105' : ''
-            }`}
-          >
-            {pkg.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-orange-500 text-white px-4 py-1">
-                  <Star className="w-3 h-3 mr-1" />
-                  {t('popular')}
-                </Badge>
-              </div>
-            )}
-
-            <CardHeader className="text-center pb-4">
-              <div className={`w-16 h-16 ${getIconColor(pkg.color)} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                <pkg.icon className="w-8 h-8" />
-              </div>
-              <CardTitle className="text-xl font-bold text-gray-900 thai-text">
-                {pkg.name}
-              </CardTitle>
-              <p className="text-sm text-gray-600 thai-text">
-                {pkg.description}
-              </p>
-            </CardHeader>
-
-            <CardContent className="pt-0">
-              {/* Pricing */}
-              <div className="text-center mb-6">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <span className="text-2xl text-gray-400 line-through">
-                    ฿{pkg.originalPrice.toLocaleString()}
-                  </span>
-                  <Badge className="bg-red-100 text-red-600">
-                    -{pkg.discount}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {packages.map((pkg) => {
+          const colorClasses = getColorClasses(pkg.color, pkg.popular);
+          const currentPrice = getPrice(pkg);
+          const originalPrice = getOriginalPrice(pkg);
+          
+          return (
+            <Card key={pkg.id} className={`classroom-card relative ${colorClasses.border}`}>
+              {pkg.popular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-orange-500 text-white px-4 py-1">
+                    <Star className="w-4 h-4 mr-1" />
+                    {t('popular')}
                   </Badge>
                 </div>
-                <div className="flex items-baseline justify-center">
-                  <span className="text-4xl font-bold text-gray-900">
-                    ฿{pkg.price.toLocaleString()}
-                  </span>
-                  <span className="text-gray-500 ml-1 thai-text">{t('per_month')}</span>
+              )}
+
+              <CardHeader className={colorClasses.bg}>
+                <div className="text-center">
+                  <CardTitle className="text-xl font-bold text-gray-900 mb-2">
+                    {pkg.name}
+                  </CardTitle>
+                  <p className="text-lg font-semibold text-gray-700 thai-text mb-2">
+                    {pkg.nameTh}
+                  </p>
+                  <p className="text-sm text-gray-600 thai-text">
+                    {pkg.description}
+                  </p>
                 </div>
-              </div>
 
-              {/* Features */}
-              <div className="space-y-3 mb-6">
-                {pkg.features.map((feature, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="w-3 h-3" />
+                <div className="text-center mt-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <span className="text-3xl font-bold text-gray-900">
+                      ฿{currentPrice.toLocaleString()}
+                    </span>
+                    <div className="text-left">
+                      <div className="text-sm text-gray-500 line-through">
+                        ฿{originalPrice.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-600 thai-text">
+                        {billingPeriod === 'monthly' ? '/เดือน' : '/ปี'}
+                      </div>
                     </div>
-                    <span className="text-sm text-gray-700 thai-text">{feature}</span>
                   </div>
-                ))}
-              </div>
+                  <Badge className="mt-2 bg-red-100 text-red-800">
+                    ประหยัด {pkg.discount}
+                  </Badge>
+                </div>
+              </CardHeader>
 
-              {/* CTA Button */}
-              <Button 
-                className={`w-full ${getButtonColor(pkg.color)} text-base font-semibold py-3`}
-                size="lg"
-                onClick={() => {
-                  console.log(`Selected package: ${pkg.id}`);
-                  // Handle payment integration here
-                }}
-              >
-                {pkg.cta}
-              </Button>
+              <CardContent className="p-6">
+                <div className="space-y-4 mb-6">
+                  {pkg.features.map((feature, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-gray-700 thai-text">
+                        {feature}
+                      </span>
+                    </div>
+                  ))}
+                  
+                  {pkg.limitations.length > 0 && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <p className="text-xs text-gray-500 thai-text mb-2">ข้อจำกัด:</p>
+                      {pkg.limitations.map((limitation, index) => (
+                        <div key={index} className="flex items-start space-x-3">
+                          <div className="w-5 h-5 flex items-center justify-center mt-0.5">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                          </div>
+                          <span className="text-xs text-gray-500 thai-text">
+                            {limitation}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              {/* Additional Info */}
-              <p className="text-xs text-gray-500 text-center mt-3 thai-text">
-                ชำระเงินปลอดภัย • ยกเลิกได้ตลอดเวลา
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+                <Button className={`w-full ${colorClasses.button}`}>
+                  <Zap className="w-4 h-4 mr-2" />
+                  <span className="thai-text">{t('buy_now')}</span>
+                </Button>
+
+                <p className="text-center text-xs text-gray-500 mt-2 thai-text">
+                  ทดลองใช้ฟรี 7 วัน • ยกเลิกได้ทุกเมื่อ
+                </p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Comparison Table */}
+      {/* Features Comparison */}
       <Card className="classroom-card mt-12">
         <CardHeader>
           <CardTitle className="text-center thai-text">เปรียบเทียบแพ็คเกจ</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-3 thai-text">ฟีเจอร์</th>
-                  <th className="text-center py-3 thai-text">ทั่วไป</th>
-                  <th className="text-center py-3 thai-text">CEFR</th>
-                  <th className="text-center py-3 thai-text">รวม</th>
+                  <th className="text-left py-3 px-4 thai-text">คุณสมบัติ</th>
+                  <th className="text-center py-3 px-4 thai-text">ทั่วไป</th>
+                  <th className="text-center py-3 px-4 thai-text">CEFR</th>
+                  <th className="text-center py-3 px-4 thai-text">รวม</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
-                <tr>
-                  <td className="py-3 thai-text">จำนวนคอร์ส</td>
-                  <td className="text-center py-3">10</td>
-                  <td className="text-center py-3">25</td>
-                  <td className="text-center py-3">50+</td>
+              <tbody>
+                <tr className="border-b">
+                  <td className="py-3 px-4 thai-text">จำนวนคอร์ส</td>
+                  <td className="text-center py-3 px-4">20+</td>
+                  <td className="text-center py-3 px-4">30+</td>
+                  <td className="text-center py-3 px-4">50+</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3 px-4 thai-text">คลาสสด/เดือน</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">2</td>
+                  <td className="text-center py-3 px-4">ไม่จำกัด</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3 px-4 thai-text">การสอน 1:1</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">2 ชม./เดือน</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="py-3 px-4 thai-text">การสอบ CEFR</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">✓</td>
+                  <td className="text-center py-3 px-4">✓</td>
                 </tr>
                 <tr>
-                  <td className="py-3 thai-text">คลาสเรียนสด</td>
-                  <td className="text-center py-3">-</td>
-                  <td className="text-center py-3">4/เดือน</td>
-                  <td className="text-center py-3">ไม่จำกัด</td>
-                </tr>
-                <tr>
-                  <td className="py-3 thai-text">คลาส 1-on-1</td>
-                  <td className="text-center py-3">-</td>
-                  <td className="text-center py-3">-</td>
-                  <td className="text-center py-3">2/เดือน</td>
-                </tr>
-                <tr>
-                  <td className="py-3 thai-text">ใบรับรอง</td>
-                  <td className="text-center py-3">-</td>
-                  <td className="text-center py-3">✓</td>
-                  <td className="text-center py-3">✓</td>
-                </tr>
-                <tr>
-                  <td className="py-3 thai-text">ซับพอร์ต</td>
-                  <td className="text-center py-3 thai-text">เวลาทำการ</td>
-                  <td className="text-center py-3">24/7</td>
-                  <td className="text-center py-3">Priority 24/7</td>
+                  <td className="py-3 px-4 thai-text">รับรองผลการเรียน</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">-</td>
+                  <td className="text-center py-3 px-4">✓</td>
                 </tr>
               </tbody>
             </table>
@@ -256,52 +340,44 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
         <CardHeader>
           <CardTitle className="thai-text">คำถามที่พบบ่อย</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2 thai-text">
-              สามารถยกเลิกหรือเปลี่ยนแปลงแพ็คเกจได้หรือไม่?
-            </h4>
-            <p className="text-gray-600 text-sm thai-text">
-              ได้ครับ คุณสามารถยกเลิกหรืออัพเกรดแพ็คเกจได้ตลอดเวลา โดยติดต่อทีมซับพอร์ตผ่าน LINE
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2 thai-text">
-              การชำระเงินปลอดภัยหรือไม่?
-            </h4>
-            <p className="text-gray-600 text-sm thai-text">
-              ปลอดภัย 100% เราใช้ระบบ Stripe ที่มีมาตรฐานความปลอดภัยระดับธนาคาร
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2 thai-text">
-              หากเรียนจบแล้วจะได้ใบรับรองหรือไม่?
-            </h4>
-            <p className="text-gray-600 text-sm thai-text">
-              แพ็คเกจ CEFR และ Combo จะได้รับใบรับรองการจบคอร์สที่สามารถใช้อ้างอิงได้
-            </p>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-gray-900 thai-text">สามารถยกเลิกได้ทุกเมื่อหรือไม่?</h4>
+              <p className="text-sm text-gray-600 thai-text mt-1">
+                ได้ครับ คุณสามารถยกเลิกได้ทุกเมื่อโดยไม่มีค่าธรรมเนียมเพิ่มเติม
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 thai-text">มีการทดลองใช้ฟรีหรือไม่?</h4>
+              <p className="text-sm text-gray-600 thai-text mt-1">
+                มีครับ ทุกแพ็คเกจมีการทดลองใช้ฟรี 7 วัน
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 thai-text">สามารถเปลี่ยนแพ็คเกจได้หรือไม่?</h4>
+              <p className="text-sm text-gray-600 thai-text mt-1">
+                ได้ครับ คุณสามารถอัพเกรดหรือดาวน์เกรดแพ็คเกจได้ทุกเมื่อ
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Contact Support */}
-      <div className="text-center bg-gray-50 rounded-xl p-8">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4 thai-text">
-          ยังไม่แน่ใจว่าจะเลือกแพ็คเกจไหน?
+      {/* CTA Section */}
+      <div className="text-center bg-gradient-to-r from-blue-500 to-orange-400 text-white p-8 rounded-lg">
+        <h3 className="text-2xl font-bold mb-4 thai-text">
+          พร้อมเริ่มต้นการเรียนรู้แล้วหรือยัง?
         </h3>
-        <p className="text-gray-600 mb-6 thai-text">
-          ปรึกษาทีมของเราได้ฟรี เราจะช่วยหาแพ็คเกจที่เหมาะกับคุณที่สุด
+        <p className="mb-6 thai-text">
+          เริ่มทดลองใช้ฟรี 7 วัน วันนี้ ไม่ต้องใช้บัตรเครดิต
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button className="btn-secondary">
-            <span className="mr-2">💬</span>
-            แชท LINE
-          </Button>
-          <Button variant="outline">
-            <span className="mr-2">📞</span>
-            โทรปรึกษา
-          </Button>
-        </div>
+        <Button 
+          onClick={() => onTabChange('courses')}
+          className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3"
+        >
+          <span className="thai-text font-semibold">เริ่มทดลองฟรี</span>
+        </Button>
       </div>
     </div>
   );
