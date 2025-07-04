@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
 import { LanguageProvider } from '@/hooks/useLanguage';
+import { AuthProvider } from '@/hooks/useAuth';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Dashboard from '@/components/pages/Dashboard';
 import Courses from '@/components/pages/Courses';
 import Live from '@/components/pages/Live';
 import Pricing from '@/components/pages/Pricing';
+import Profile from '@/components/pages/Profile';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -36,12 +38,7 @@ const Index = () => {
       case 'pricing':
         return <Pricing onTabChange={setActiveTab} />;
       case 'profile':
-        return (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 thai-text">โปรไฟล์</h2>
-            <p className="text-gray-600 thai-text">ระบบโปรไฟล์กำลังพัฒนา เร็วๆ นี้</p>
-          </div>
-        );
+        return <Profile />;
       default:
         return <Dashboard onTabChange={setActiveTab} />;
     }
@@ -49,13 +46,15 @@ const Index = () => {
 
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Header activeTab={activeTab} onTabChange={setActiveTab} />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {renderContent()}
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-50">
+          <Header activeTab={activeTab} onTabChange={setActiveTab} />
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {renderContent()}
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
     </LanguageProvider>
   );
 };

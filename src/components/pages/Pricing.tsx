@@ -1,10 +1,12 @@
-
 import React, { useState } from 'react';
-import { Check, Star, Users, Clock, Video, BookOpen, Award, Zap } from 'lucide-react';
+import { Check, Star, Users, Clock, Video, BookOpen, Award, Zap, CreditCard } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import AuthModal from '@/components/auth/AuthModal';
 
 interface PricingProps {
   onTabChange: (tab: string) => void;
@@ -12,7 +14,9 @@ interface PricingProps {
 
 const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
   const { t } = useLanguage();
+  const { user, subscription } = useAuth();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [loading, setLoading] = useState<string | null>(null);
 
   const packages = [
     {
@@ -116,6 +120,34 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
     }
   ];
 
+  const handleSubscribe = async (packageId: string) => {
+    if (!user) {
+      return;
+    }
+
+    setLoading(packageId);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { package: packageId }
+      });
+
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const isCurrentPlan = (packageId: string) => {
+    if (!subscription?.subscribed) return false;
+    return subscription.subscription_tier?.toLowerCase() === packageId;
+  };
+
   const getPrice = (pkg: typeof packages[0]) => {
     return billingPeriod === 'monthly' ? pkg.monthlyPrice : pkg.yearlyPrice;
   };
@@ -160,9 +192,35 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
           {t('choose_package')}
         </h1>
         <p className="text-gray-600 thai-text max-w-2xl mx-auto">
-          เลือกแพ็คเกจที่เหมาะกับความต้องการและง예บประมาณของคุณ พร้อมส่วนลดพิเศษ!
+          เลือกแพ็คเกจที่เหมาะกับความต้องการและงบประมาณของคุณ พร้อมส่วนลดพิเศษ!
         </p>
       </div>
+
+      {/* Real-time Subscription Status */}
+      {user && subscription && (
+        <Card className="classroom-card border-green-200 bg-green-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Badge className="bg-green-500 text-white">
+                  <CreditCard className="w-3 h-3 mr-1" />
+                  {subscription.subscribed ? 'แพ็คเกจปัจจุบัน' : 'ยังไม่มีแพ็คเกจ'}
+                </Badge>
+                {subscription.subscribed && (
+                  <span className="text-sm font-medium text-green-800">
+                    {subscription.subscription_tier}
+                  </span>
+                )}
+              </div>
+              {subscription.subscribed && subscription.subscription_end && (
+                <span className="text-sm text-green-700">
+                  หมดอายุ: {new Date(subscription.subscription_end).toLocaleDateString('th-TH')}
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Billing Toggle */}
       <div className="flex justify-center mb-8">
@@ -192,13 +250,13 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {packages.map((pkg) => {
-          const colorClasses = getColorClasses(pkg.color, pkg.popular);
-          const currentPrice = getPrice(pkg);
-          const originalPrice = getOriginalPrice(pkg);
+          const currentPrice = billingPeriod === 'monthly' ? pkg.monthlyPrice : pkg.yearlyPrice;
+          const originalPrice = billingPeriod === 'monthly' ? pkg.originalMonthlyPrice : pkg.originalYearlyPrice;
+          const isCurrent = isCurrentPlan(pkg.id);
           
           return (
-            <Card key={pkg.id} className={`classroom-card relative ${colorClasses.border}`}>
-              {pkg.popular && (
+            <Card key={pkg.id} className={`classroom-card relative ${isCurrent ? 'ring-2 ring-green-400 border-green-400' : pkg.popular ? 'ring-2 ring-orange-400 border-orange-400' : 'border-gray-200'}`}>
+              {pkg.popular && !isCurrent && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-orange-500 text-white px-4 py-1">
                     <Star className="w-4 h-4 mr-1" />
@@ -206,8 +264,17 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
                   </Badge>
                 </div>
               )}
+              
+              {isCurrent && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-green-500 text-white px-4 py-1">
+                    <Check className="w-4 h-4 mr-1" />
+                    แพ็คเกจปัจจุบัน
+                  </Badge>
+                </div>
+              )}
 
-              <CardHeader className={colorClasses.bg}>
+              <CardHeader className={pkg.color === 'orange' ? 'bg-orange-50' : pkg.color === 'green' ? 'bg-green-50' : 'bg-blue-50'}>
                 <div className="text-center">
                   <CardTitle className="text-xl font-bold text-gray-900 mb-2">
                     {pkg.name}
@@ -268,10 +335,39 @@ const Pricing: React.FC<PricingProps> = ({ onTabChange }) => {
                   )}
                 </div>
 
-                <Button className={`w-full ${colorClasses.button}`}>
-                  <Zap className="w-4 h-4 mr-2" />
-                  <span className="thai-text">{t('buy_now')}</span>
-                </Button>
+                {user ? (
+                  <Button 
+                    className={`w-full ${isCurrent ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : pkg.color === 'orange' ? 'btn-primary' : pkg.color === 'green' ? 'bg-green-600 hover:bg-green-700 text-white' : 'btn-secondary'}`}
+                    onClick={() => handleSubscribe(pkg.id)}
+                    disabled={loading === pkg.id || isCurrent}
+                  >
+                    {loading === pkg.id ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        กำลังดำเนินการ...
+                      </>
+                    ) : isCurrent ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        <span className="thai-text">แพ็คเกจปัจจุบัน</span>
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-4 h-4 mr-2" />
+                        <span className="thai-text">{t('buy_now')}</span>
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <AuthModal
+                    trigger={
+                      <Button className={`w-full ${pkg.color === 'orange' ? 'btn-primary' : pkg.color === 'green' ? 'bg-green-600 hover:bg-green-700 text-white' : 'btn-secondary'}`}>
+                        <Zap className="w-4 h-4 mr-2" />
+                        <span className="thai-text">เข้าสู่ระบบเพื่อสั่งซื้อ</span>
+                      </Button>
+                    }
+                  />
+                )}
 
                 <p className="text-center text-xs text-gray-500 mt-2 thai-text">
                   ทดลองใช้ฟรี 7 วัน • ยกเลิกได้ทุกเมื่อ

@@ -1,8 +1,11 @@
 
 import React, { useState } from 'react';
-import { Menu, X, Globe, User } from 'lucide-react';
+import { Menu, X, Globe, User, Bell, CreditCard } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import AuthModal from '@/components/auth/AuthModal';
 
 interface HeaderProps {
   activeTab: string;
@@ -12,6 +15,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, toggleLanguage, t } = useLanguage();
+  const { user, subscription, signOut } = useAuth();
 
   const navigationItems = [
     { id: 'dashboard', label: t('dashboard') },
@@ -56,6 +60,23 @@ const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
 
           {/* Desktop Controls */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Subscription Status */}
+            {user && subscription?.subscribed && (
+              <Badge className="bg-green-100 text-green-800 flex items-center space-x-1">
+                <CreditCard className="w-3 h-3" />
+                <span className="text-xs">{subscription.subscription_tier}</span>
+              </Badge>
+            )}
+            
+            {/* Notifications */}
+            {user && (
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="w-4 h-4" />
+                <Badge className="absolute -top-1 -right-1 w-2 h-2 p-0 bg-red-500" />
+              </Button>
+            )}
+            
+            {/* Language Toggle */}
             <Button
               variant="ghost"
               size="sm"
@@ -65,15 +86,29 @@ const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{language.toUpperCase()}</span>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onTabChange('profile')}
-              className="flex items-center space-x-2"
-            >
-              <User className="w-4 h-4" />
-              <span className="text-sm font-medium">{t('profile')}</span>
-            </Button>
+            
+            {/* User Menu */}
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onTabChange('profile')}
+                  className="flex items-center space-x-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
+                </Button>
+              </div>
+            ) : (
+              <AuthModal
+                trigger={
+                  <Button variant="default" size="sm" className="thai-text">
+                    เข้าสู่ระบบ
+                  </Button>
+                }
+              />
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -117,19 +152,37 @@ const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
                   {item.label}
                 </button>
               ))}
-              <button
-                onClick={() => {
-                  onTabChange('profile');
-                  setIsMobileMenuOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-2 text-base font-medium transition-colors rounded-md ${
-                  activeTab === 'profile'
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-                }`}
-              >
-                {t('profile')}
-              </button>
+              
+              {/* Mobile Auth */}
+              {user ? (
+                <>
+                  <button
+                    onClick={() => {
+                      onTabChange('profile');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                  >
+                    {t('profile')}
+                  </button>
+                  <button
+                    onClick={signOut}
+                    className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md"
+                  >
+                    ออกจากระบบ
+                  </button>
+                </>
+              ) : (
+                <div className="px-4 py-2">
+                  <AuthModal
+                    trigger={
+                      <Button variant="default" size="sm" className="w-full thai-text">
+                        เข้าสู่ระบบ
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}
