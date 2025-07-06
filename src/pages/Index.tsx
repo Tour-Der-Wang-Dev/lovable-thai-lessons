@@ -13,6 +13,12 @@ import Documents from '@/components/pages/Documents';
 import Pricing from '@/components/pages/Pricing';
 import Profile from '@/components/pages/Profile';
 
+// Import new student modules
+import StudentDashboard from '@/components/student/StudentDashboard';
+import BookmarkSystem from '@/components/student/BookmarkSystem';
+import AutoResume from '@/components/student/AutoResume';
+import NotificationSystem from '@/components/student/NotificationSystem';
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
 
@@ -21,7 +27,7 @@ const Index = () => {
       case 'home':
         return <Landing onTabChange={setActiveTab} />;
       case 'dashboard':
-        return <Dashboard onTabChange={setActiveTab} />;
+        return <StudentDashboard />;
       case 'courses':
         return <Courses onTabChange={setActiveTab} />;
       case 'live':
@@ -34,6 +40,12 @@ const Index = () => {
         return <Pricing onTabChange={setActiveTab} />;
       case 'profile':
         return <Profile />;
+      case 'bookmarks':
+        return <BookmarkSystem />;
+      case 'resume':
+        return <AutoResume />;
+      case 'notifications':
+        return <NotificationSystem />;
       default:
         return <Landing onTabChange={setActiveTab} />;
     }
