@@ -4,17 +4,22 @@ import { LanguageProvider } from '@/hooks/useLanguage';
 import { AuthProvider } from '@/hooks/useAuth';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Landing from '@/components/pages/Landing';
 import Dashboard from '@/components/pages/Dashboard';
 import Courses from '@/components/pages/Courses';
 import Live from '@/components/pages/Live';
+import Quizzes from '@/components/pages/Quizzes';
+import Documents from '@/components/pages/Documents';
 import Pricing from '@/components/pages/Pricing';
 import Profile from '@/components/pages/Profile';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('home');
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'home':
+        return <Landing onTabChange={setActiveTab} />;
       case 'dashboard':
         return <Dashboard onTabChange={setActiveTab} />;
       case 'courses':
@@ -22,25 +27,15 @@ const Index = () => {
       case 'live':
         return <Live />;
       case 'quizzes':
-        return (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 thai-text">แบบทดสอบ</h2>
-            <p className="text-gray-600 thai-text">ระบบแบบทดสอบกำลังพัฒนา เร็วๆ นี้</p>
-          </div>
-        );
+        return <Quizzes />;
       case 'documents':
-        return (
-          <div className="text-center py-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 thai-text">เอกสารการเรียน</h2>
-            <p className="text-gray-600 thai-text">ระบบเอกสารกำลังพัฒนา เร็วๆ นี้</p>
-          </div>
-        );
+        return <Documents />;
       case 'pricing':
         return <Pricing onTabChange={setActiveTab} />;
       case 'profile':
         return <Profile />;
       default:
-        return <Dashboard onTabChange={setActiveTab} />;
+        return <Landing onTabChange={setActiveTab} />;
     }
   };
 
