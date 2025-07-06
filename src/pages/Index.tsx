@@ -19,6 +19,9 @@ import BookmarkSystem from '@/components/student/BookmarkSystem';
 import AutoResume from '@/components/student/AutoResume';
 import NotificationSystem from '@/components/student/NotificationSystem';
 
+// Import LINE integration
+import LineIntegration from '@/components/admin/LineIntegration';
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState('home');
 
@@ -46,6 +49,8 @@ const Index = () => {
         return <AutoResume />;
       case 'notifications':
         return <NotificationSystem />;
+      case 'line-integration':
+        return <LineIntegration />;
       default:
         return <Landing onTabChange={setActiveTab} />;
     }
